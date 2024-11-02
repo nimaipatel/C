@@ -14,9 +14,11 @@
 
 typedef struct Fifo(FIFO_TYPE) Fifo(FIFO_TYPE);
 
+void Fifo_Func(FIFO_TYPE, Push_Front)(Fifo(FIFO_TYPE *fifo), FIFO_TYPE item);
 void Fifo_Func(FIFO_TYPE, Push_Back)(Fifo(FIFO_TYPE) * fifo, FIFO_TYPE item);
 FIFO_TYPE Fifo_Func(FIFO_TYPE, Pop_Front)(Fifo(FIFO_TYPE) * fifo);
 
+#define Fifo_Push_Front(FIFO_TYPE, v, i) Fifo_Func(FIFO_TYPE, Push_Front)(v, i)
 #define Fifo_Push_Back(FIFO_TYPE, v, i) Fifo_Func(FIFO_TYPE, Push_Back)(v, i)
 #define Fifo_Pop_Front(FIFO_TYPE, v) Fifo_Func(FIFO_TYPE, Pop_Front)(v)
 
@@ -73,6 +75,15 @@ Fifo_Func(FIFO_TYPE, Shrink)(Fifo(FIFO_TYPE) * fifo)
         fifo->start = 0;
         fifo->cap = cap;
     }
+}
+
+void
+Fifo_Func(FIFO_TYPE, Push_Front)(Fifo(FIFO_TYPE) * fifo, FIFO_TYPE item)
+{
+    Fifo_Func(FIFO_TYPE, Grow)(fifo);
+    fifo->start = (fifo->start - 1 + fifo->cap) % fifo->cap;
+    fifo->items[fifo->start] = item;
+    fifo->len += 1;
 }
 
 void
