@@ -1,40 +1,36 @@
+#define VEC_TYPE int
+#define VEC_IMPL
 #include "vec.h"
-#include "heap.h"
+
+#define FIFO_TYPE int
+#define FIFO_IMPL
+#include "fifo.h"
+
 #include <stdio.h>
-
-int
-cmp(int a, int b)
-{
-    return a - b;
-}
-
-VEC_IMPL(int)
-
-HEAP_IMPL(int, cmp)
+#include "nice.c"
 
 int
 main(void)
 {
-    Vec(int) heap = { 0 };
+    Fifo(int) q = { 0 };
+    Vec(int) v = { 0 };
 
-    for (int i = 0; i <= 5; i += 1) {
-        Vec_Push(int, &heap, i);
-        Heap_Sift_Up(int, heap.items, heap.len, heap.len - 1);
+    for (int i = 0; i < 10; i += 1) {
+        Fifo_Push_Back(int, &q, i);
+        Vec_Push(int, &v, i);
     }
 
-    for (int i = 9; i >= 5; i -= 1) {
-        Vec_Push(int, &heap, i);
-        Heap_Sift_Up(int, heap.items, heap.len, heap.len - 1);
+    while (q.len > 0) {
+        int i = Fifo_Pop_Front(int, &q);
+        printf("%d ", i);
     }
+    printf("\n");
 
-    while (heap.len > 0) {
-        int min = Vec_Swap_Remove(int, &heap, 0);
-        Heap_Sift_Down(int, heap.items, heap.len, 0);
-
-        printf("%d\n", min);
+    while (v.len > 0) {
+        int i = Vec_Remove(int, &v, 0);
+        printf("%d ", i);
     }
-
-    Vec_Free(int, &heap);
+    printf("\n");
 
     return 0;
 }
