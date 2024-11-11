@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 
 #ifndef FIFO_TYPE
@@ -14,13 +15,15 @@
 
 typedef struct Fifo(FIFO_TYPE) Fifo(FIFO_TYPE);
 
-void Fifo_Func(FIFO_TYPE, Push_Front)(Fifo(FIFO_TYPE *fifo), FIFO_TYPE item);
+void Fifo_Func(FIFO_TYPE, Push_Front)(Fifo(FIFO_TYPE) * fifo, FIFO_TYPE item);
 void Fifo_Func(FIFO_TYPE, Push_Back)(Fifo(FIFO_TYPE) * fifo, FIFO_TYPE item);
 FIFO_TYPE Fifo_Func(FIFO_TYPE, Pop_Front)(Fifo(FIFO_TYPE) * fifo);
+FIFO_TYPE Fifo_Func(FIFO_TYPE, Pop_Back)(Fifo(FIFO_TYPE) * fifo);
 
 #define Fifo_Push_Front(FIFO_TYPE, v, i) Fifo_Func(FIFO_TYPE, Push_Front)(v, i)
 #define Fifo_Push_Back(FIFO_TYPE, v, i) Fifo_Func(FIFO_TYPE, Push_Back)(v, i)
 #define Fifo_Pop_Front(FIFO_TYPE, v) Fifo_Func(FIFO_TYPE, Pop_Front)(v)
+#define Fifo_Pop_Back(FIFO_TYPE, v) Fifo_Func(FIFO_TYPE, Pop_Back)(v)
 
 #ifdef FIFO_IMPL
 
@@ -109,6 +112,22 @@ Fifo_Func(FIFO_TYPE, Pop_Front)(Fifo(FIFO_TYPE) * fifo)
 
     return result;
 }
+
+FIFO_TYPE
+Fifo_Func(FIFO_TYPE, Pop_Back)(Fifo(FIFO_TYPE) * fifo)
+{
+    assert(fifo->len > 0);
+
+    FIFO_TYPE result = fifo->items[(fifo->start + fifo->len - 1) % fifo->cap];
+    fifo->len -= 1;
+
+    Fifo_Func(FIFO_TYPE, Shrink)(fifo);
+
+    return result;
+}
+
+#undef FIFO_IMPL
+
 #endif // FIFO_IMPL
 
 #undef FIFO_TYPE
